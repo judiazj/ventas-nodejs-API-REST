@@ -4,7 +4,9 @@ import {check} from 'express-validator';
 import {
     obtenerCliente,
     crearCliente, 
-    actualizarClienteCompleto
+    actualizarClienteCompleto,
+    actualizarClienteParcial,
+    eliminarCliente
 } from '../controllers/cliente.js';
 
 const router = Router();
@@ -31,16 +33,8 @@ router.put('/:id',[
     check('ciudad').isLength({min:1}).withMessage('La ciudad es requerido')
 ], actualizarClienteCompleto);
 
-router.patch('/:id', (req, res) => {
-    res.json({
-        msg: 'Cliente API-PATCH'
-    })
-});
+router.patch('/:id', actualizarClienteParcial);
 
-router.delete('/:id', (req, res) => {
-    res.json({
-        msg: 'Cliente API-DELETE'
-    })
-});
+router.delete('/:id', eliminarCliente);
 
 export default router;

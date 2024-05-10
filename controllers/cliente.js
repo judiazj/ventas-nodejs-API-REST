@@ -3,6 +3,12 @@ import {validationResult} from 'express-validator';
 
 import pool from '../connection.js';
 
+const validarParametros = (req, res) => {
+    const errores = validationResult(req);
+    if(!errores.isEmpty()){
+        return res.status(400).json({errores: errores.array()})
+    }
+}
 
 export const obtenerCliente = async(req = request, res = response) => {
     try {
@@ -23,11 +29,7 @@ export const obtenerCliente = async(req = request, res = response) => {
 };
 
 export const crearCliente = async(req = request, res = response) => {
-    const errores = validationResult(req);
-    if(!errores.isEmpty()){
-        return res.status(400).json({errores: errores.array()})
-    }
-
+    validarParametros(req, res);
     const {nombre, direccion, telefono, ciudad} = req.body;
 
     try {
@@ -50,10 +52,7 @@ export const crearCliente = async(req = request, res = response) => {
 };
 
 export const actualizarClienteCompleto = async(req = request, res = response) => {
-    const errores = validationResult(req);
-    if(!errores.isEmpty()){
-        return res.status(400).json({errores: errores.array()});
-    }
+    validarParametros(req, res);
 
     const {id} = req.params;
     const {nombre, direccion, telefono, ciudad} = req.body;
@@ -66,7 +65,6 @@ export const actualizarClienteCompleto = async(req = request, res = response) =>
     
         await pool.query(`UPDATE cliente SET nombre = $2, direccion = $3, telefono = $4,
                                         ciudad = $5 WHERE id_cliente = $1`, [id, nombre, direccion, telefono, ciudad]);
-        console.log({nombre, direccion, telefono, ciudad});
         res.json({
             ok: true,
             msg: 'Cliente actualizado',
@@ -84,9 +82,45 @@ export const actualizarClienteCompleto = async(req = request, res = response) =>
 };
 
 export const actualizarClienteParcial = async(req = request, res = response) => {
-
+    const {id} = req.params;
+    const {nombre, direccion, telefono, ciudad} = req.body;
+    try {
+        const {rows} = await pool.query('SELECT id_cliente FROM cliente ORDER BY id_cliente DESC LIMIT 1');
+        
+        if(id > rows[0].id_cliente){
+            return res.status(404).json({msg: `El cliente con id: ${id} no fue encontrado`});
+        }
+    
+        await pool.query(`UPDATE cliente SET nombre = COALESCE($2,nombre), direccion = COALESCE($3,direccion), telefono = COALESCE($4,telefono),
+                                        ciudad = COALESCE($5,ciudad) WHERE id_cliente = $1`, [id, nombre, direccion, telefono, ciudad]);
+        res.json({
+            ok: true,
+            msg: 'Cliente actualizado',
+            id
+        })
+    } catch (error) {
+        res.status(500).json({
+            ok: false,
+            msg:'El cliente no pudo ser actualizado'
+        })
+        console.log(error);
+    }
 };
 
 export const eliminarCliente = async(req = request, res = response) => {
-
+    const {id} = req.params;
+    try {
+        await pool.query('DELETE FROM cliente WHERE id_cliente = $1', [id]);
+        res.json({
+            ok: true,
+            msg: 'El cliente ha sido eliminado con exito',
+            id
+        })
+    } catch (error) {
+        res.status(500).json({
+            ok: false,
+            msg: 'El cliente no pudo ser eliminado'
+        })
+        console.log(error);
+    }
 };
