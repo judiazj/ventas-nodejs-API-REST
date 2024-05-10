@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 
 import ClientePath from './routes/cliente.js';
+import ProductoPath from './routes/producto.js';
 import {PORT} from './config.js';
 
 const app = express();
@@ -12,6 +13,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/clientes', ClientePath);
+app.use('/api/productos', ProductoPath);
 
 app.listen(PORT, () => {
     console.log(`Server on port ${PORT}`);

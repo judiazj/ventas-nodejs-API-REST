@@ -109,11 +109,13 @@ export const actualizarClienteParcial = async(req = request, res = response) => 
 
 export const eliminarCliente = async(req = request, res = response) => {
     const {id} = req.params;
+    let msg = '';
     try {
-        await pool.query('DELETE FROM cliente WHERE id_cliente = $1', [id]);
+        const {rowCount} =await pool.query('DELETE FROM cliente WHERE id_cliente = $1', [id]);
+        rowCount > 0 ? msg = 'El cliente ha sido eliminado con exito': 'El cliente no existe'
         res.json({
             ok: true,
-            msg: 'El cliente ha sido eliminado con exito',
+            msg,
             id
         })
     } catch (error) {
