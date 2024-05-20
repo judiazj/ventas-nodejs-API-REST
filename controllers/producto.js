@@ -2,20 +2,13 @@ import { request,response } from 'express';
 import {validationResult} from 'express-validator';
 import pool from '../connection.js';
 
-const validarParametros = (req = request, res = response) => {
-    const errores = validationResult(req)
-    if(!errores.isEmpty()){
-        return res.status(400).json({errores: errores.array()});
-    }
-}
-
 export const obtenerProductos = async(req = request, res= response) => {
     try {
         const {rows} = await pool.query('SELECT * FROM producto ORDER BY id_producto');
 
         res.json({
             ok: true,
-            msg: 'Obteniendo clientes',
+            msg: 'Obteniendo productos',
             clientes: rows 
         })
     } catch (error) {
@@ -28,7 +21,6 @@ export const obtenerProductos = async(req = request, res= response) => {
 }
 
 export const crearProducto = async(req = request, res= response) => {
-    validarParametros(req, res);
     const {descripcion, precio} = req.body;
     try {
         await pool.query('INSERT INTO producto (descripcion,precio) VALUES ($1, $2)', [descripcion, precio]);
@@ -48,7 +40,6 @@ export const crearProducto = async(req = request, res= response) => {
 }
 
 export const actualizarProductoCompleto = async(req = request, res= response) => {
-    validarParametros(req, res);
     const {id} = req.params;
     const {descripcion, precio} = req.body;
     try {

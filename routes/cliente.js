@@ -1,6 +1,8 @@
 import {Router} from 'express';
 import {check} from 'express-validator';
 
+import {validarParametros} from '../middlewares/validarParametros.js';
+
 import {
     obtenerCliente,
     crearCliente, 
@@ -22,7 +24,8 @@ router.post('/',[
     check('nombre').isLength({min:1}).withMessage('El nombre es requerido'),
     check('direccion').isLength({min:1}).withMessage('La direccion es requerido'),
     check('telefono').isLength({min:1}).withMessage('El telefono es requerido'),
-    check('ciudad').isLength({min:1}).withMessage('La ciudad es requerido')
+    check('ciudad').isLength({min:1}).withMessage('La ciudad es requerido'),
+    validarParametros
 ] , crearCliente);
 
 router.put('/:id',[
@@ -30,7 +33,8 @@ router.put('/:id',[
     check('nombre').isLength({min:1}).withMessage('El nombre es requerido'),
     check('direccion').isLength({min:1}).withMessage('La direccion es requerido'),
     check('telefono').isLength({min:1}).withMessage('El telefono es requerido'),
-    check('ciudad').isLength({min:1}).withMessage('La ciudad es requerido')
+    check('ciudad').isLength({min:1}).withMessage('La ciudad es requerido'),
+    validarParametros
 ], actualizarClienteCompleto);
 
 router.patch('/:id', actualizarClienteParcial);

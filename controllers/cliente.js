@@ -1,14 +1,6 @@
 import {request, response} from 'express';
-import {validationResult} from 'express-validator';
 
 import pool from '../connection.js';
-
-const validarParametros = (req, res) => {
-    const errores = validationResult(req);
-    if(!errores.isEmpty()){
-        return res.status(400).json({errores: errores.array()})
-    }
-}
 
 export const obtenerCliente = async(req = request, res = response) => {
     try {
@@ -29,7 +21,6 @@ export const obtenerCliente = async(req = request, res = response) => {
 };
 
 export const crearCliente = async(req = request, res = response) => {
-    validarParametros(req, res);
     const {nombre, direccion, telefono, ciudad} = req.body;
 
     try {
@@ -52,8 +43,6 @@ export const crearCliente = async(req = request, res = response) => {
 };
 
 export const actualizarClienteCompleto = async(req = request, res = response) => {
-    validarParametros(req, res);
-
     const {id} = req.params;
     const {nombre, direccion, telefono, ciudad} = req.body;
     try {
