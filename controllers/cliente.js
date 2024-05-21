@@ -48,7 +48,7 @@ export const actualizarClienteCompleto = async(req = request, res = response) =>
     try {
         const {rows} = await pool.query('SELECT id_cliente FROM cliente ORDER BY id_cliente DESC LIMIT 1');
         
-        if(id > rows[0].id_cliente){
+        if(id > rows[0].id_cliente || id < 0){
             return res.status(404).json({msg: `El cliente con id: ${id} no fue encontrado`});
         }
     
@@ -76,7 +76,7 @@ export const actualizarClienteParcial = async(req = request, res = response) => 
     try {
         const {rows} = await pool.query('SELECT id_cliente FROM cliente ORDER BY id_cliente DESC LIMIT 1');
         
-        if(id > rows[0].id_cliente){
+        if(id > rows[0].id_cliente || id < 0){
             return res.status(404).json({msg: `El cliente con id: ${id} no fue encontrado`});
         }
     
@@ -101,7 +101,7 @@ export const eliminarCliente = async(req = request, res = response) => {
     let msg = '';
     try {
         const {rowCount} =await pool.query('DELETE FROM cliente WHERE id_cliente = $1', [id]);
-        rowCount > 0 ? msg = 'El cliente ha sido eliminado con exito': 'El cliente no existe'
+        rowCount > 0 ? msg = 'El cliente ha sido eliminado con exito': msg = 'El cliente no existe';
         res.json({
             ok: true,
             msg,

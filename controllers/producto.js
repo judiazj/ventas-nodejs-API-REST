@@ -45,7 +45,7 @@ export const actualizarProductoCompleto = async(req = request, res= response) =>
     try {
         const {rows} = await pool.query('SELECT id_producto FROM producto ORDER BY id_producto DESC LIMIT 1');
         
-        if(id > rows[0].id_producto){
+        if(id > rows[0].id_producto || id < 0){
             return res.status(404).json({msg: `El producto con id: ${id} no fue encontrado`});
         }
 
@@ -71,7 +71,7 @@ export const actualizarProductoParcial = async(req = request, res= response) => 
     try {
         const {rows} = await pool.query('SELECT id_producto FROM producto ORDER BY id_producto DESC LIMIT 1');
         
-        if(id > rows[0].id_producto){
+        if(id > rows[0].id_producto || id < 0){
             return res.status(404).json({msg: `El producto con id: ${id} no fue encontrado`});
         }
 
